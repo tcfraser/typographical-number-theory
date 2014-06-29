@@ -1,8 +1,8 @@
 from predicates import *
 import regex
 
-axiom_1 = "Aa:~Sa=0" 	#[forall, var_a, colon, not_, succ, var_a, equal, zero]
-axiom_2 = "Aa:(a+0)=a" 	#[forall, var_a, colon, l_para, var_a, add, zero, r_para, equal, var_a]
+axiom_1 = "Aa:~Sa=0"	#[forall, var_a, colon, not_, succ, var_a, equal, zero]
+axiom_2 = "Aa:(a+0)=a"	#[forall, var_a, colon, l_para, var_a, add, zero, r_para, equal, var_a]
 axiom_3 = "Aa:Ab:(a+Sb)=S(a+b)"
 axiom_4 = "Aa:(a.0)=0"
 axiom_5 = "Aa:Ab:(a.Sb)=((a.b)+a)"
@@ -13,9 +13,9 @@ DR_ts = "<~a=b&~~b=d>"
 # This function replaces all instances of A with wfs(1) and B with wfs(2) for later use in checking
 # string -> string
 def AB_wfs (general_string, template):
-	if template == True:
+	if template:
 		return general_string.replace("A",wfs(1)).replace("B", wfs(2))
-	elif template == False:
+	elif not template:
 		return general_string.replace("A","\g<wfs1>").replace("B", "\g<wfs2>")
 
 def interchange (string, form1, form2, reverse = False):
