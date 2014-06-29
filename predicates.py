@@ -5,10 +5,13 @@ import regex
 # Defining the regular expressions
 Numeral = r"S*0"
 Variable = r"[abcde]'*?"
-Term = "(?P<Term>S*(?:\(((?&Term))[.+]((?&Term))\)" + "|" + Numeral + "|" + Variable + "))" 
-# The Term[9:] is to remove the double reference on the ?P<Term> group.
-Well_Formed_String = "(?P<wfs>" + "(?:~|E"+ Variable + ":" + "|A" + Variable + ":" + ")*" + "(?:<((?&wfs))[&V-]((?&wfs))>" + "|" + Term + "=" + "(" + Term[9:] + "))" 
-wfs = Well_Formed_String
+
+def Term(index = 1):
+	return regex.sub(r"Term", "Term" + str(index), "(?P<Term>S*(?:\(((?&Term))[.+]((?&Term))\)" + "|" + Numeral + "|" + Variable + "))")  
+
+
+def wfs(index = 1):
+	return regex.sub(r"wfs", "wfs" + str(index), "(?P<wfs>" + "(?:~|E"+ Variable + ":" + "|A" + Variable + ":" + ")*" + "(?:<((?&wfs))[&V-]((?&wfs))>" + "|" + Term(2*index-1) + "=" + Term(2*index) + "))") #wfs(1) has term(1) and term(2).... wfs(2) has term(3) and term(4)..........
 
 # Predicate to determine if string matches desired regular expression
 # regex string -> Boolean
