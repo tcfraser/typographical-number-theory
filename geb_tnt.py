@@ -37,7 +37,7 @@ def DeMorgan (string, reverse = False):
 	return interchange(string, "<~A&~B>", "~<AVB>", reverse)
 
 def Contrapositive (string, reverse = False):
-	return interchange(string, "<A-B>", "<~A-~B>", reverse)
+	return interchange(string, "<A-B>", "<~B-~A>", reverse)
 
 def Switcheroo (string, reverse = False):
 	return interchange(string, "<AVB>", "<~A-B>", reverse)
