@@ -16,5 +16,5 @@ def wfs(index = 1):
 # Predicate to determine if string matches desired regular expression
 # regex string -> Boolean
 def isType (exp, string):
-	return True if regex.match((r"^" + exp + r"$"), string) else False
+	return True if regex.fullmatch(exp, string) else False
 		
