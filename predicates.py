@@ -1,20 +1,25 @@
 # This is my Predicate module
 # Importing the regular expressions module
 import regex
+# I should really do regex.compile on these to enable it much faster so that I do not have to create them each time
+
 
 # Defining the regular expressions
 Numeral = r"S*0"
 Variable = r"[abcde]'*?"
+Modifiers = "(?:"+ "~|E"+ Variable + ":" + "|A" + Variable + ":" + ")*" 
 
-def Term(index = 1):
-	return regex.sub(r"Term", "Term" + str(index), "(?P<Term>S*(?:\(((?&Term))[.+]((?&Term))\)" + "|" + Numeral + "|" + Variable + "))")  
+def indices(listofints):
+    return "_" + "_".join(str(i) for i in listofints)
 
+def Term(i = [0]):
+    return regex.subf(r"Term", "Term" + indices(i), "(?P<Term>S*(?:\(((?&Term))[.+]((?&Term))\)" + "|" + Numeral + "|" + Variable + "))")  
 
-def wfs(index = 1):
-	return regex.sub(r"wfs", "wfs" + str(index), "(?P<wfs>" + "(?:~|E"+ Variable + ":" + "|A" + Variable + ":" + ")*" + "(?:<((?&wfs))[&V-]((?&wfs))>" + "|" + Term(2*index-1) + "=" + Term(2*index) + "))") #wfs(1) has term(1) and term(2).... wfs(2) has term(3) and term(4)..........
+def wfs(i = [0]):
+    return regex.subf(r"wfs", "wfs" + indices(i), "(?P<wfs>" +  Modifiers + "(?:<((?&wfs))[&V-]((?&wfs))>" + "|" + Term([i[0],1]) + "=" + Term([i[0],2]) + "))")
 
 # Predicate to determine if string matches desired regular expression
 # regex string -> Boolean
 def isType (exp, string):
-	return True if regex.fullmatch(exp, string) else False
-		
+    return True if regex.fullmatch(exp, string) else False
+        
