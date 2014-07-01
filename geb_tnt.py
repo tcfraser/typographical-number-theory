@@ -14,7 +14,15 @@ def groups (match):
     if match == None:
         return []
     else:
-        return match.groupdict()
+        return match.capturesdict()
+
+# takes in a regex match and a replacment regex and applies it. If the regex match was none, it will return an empty list
+# regexmatch format -> list of things
+def replace (match, newform):
+    if match == None:
+        return []
+    else:
+        return [match.expandf(newform)]
 
 # This function replaces all instances of A with wfs(1) and B with wfs(2) for later use in checking
 # string -> string
@@ -22,48 +30,69 @@ def AB_wfs (general_string, template):
     if template:
         return general_string.replace("A",wfs([1])).replace("B", wfs([2]))
     elif not template:
-        return general_string.replace("A","\g<wfs_1>").replace("B", "\g<wfs_2>")
+        return general_string.replace("A","{wfs_1}").replace("B", "{wfs_2}")
 
-# interchange is meant to handle DeMorgan, Contrapostive, and Switheroo by taking in a string, and returning a list of strings that correspond to all possible modifications that could be made to the string that are valid under the respective rule.
+# interchange is meant to handle DeMorgan, Contrapositive, and Switheroo by taking in a string, and returning a list of strings that correspond to all possible modifications that could be made to the string that are valid under the respective rule.
 # wfs -> [wfs,wfs,wfs...]
 
 def interchange (string, form1, form2):
-    one_to_two = regex.match(AB_wfs(form1, True), string)
-    two_to_one = regex.match(AB_wfs(form2, True), string)
-    # *************************** one_to_two.expandf(AB_wfs(form2, False))
-    return [["1->2",groups(one_to_two)],["2->1",groups(two_to_one)]]
-    # Possibilities = [(string != one_to_two),(string != two_to_one)]
-    # if Possibilities == [False, False]:
-    #     return "Can't be Modified."
-    # elif Possibilities == [True, False]:
-    #     return one_to_two
-    # elif Possibilities == [False, True]:
-    #     return two_to_one
-    # elif Possibilities  == [True, True]:
-    #     return one_to_two if reverse == False else two_to_one
-    # else:
-    #     return "Error"
+    if isType(Modifiers([0]) + Term([1]) + "=" + Term([2]),string):
+        return []
+    else:
+        one_to_two = regex.fullmatch(Modifiers([0]) + AB_wfs(form1, True), string)  # I can be more efficient and remove these with a regex.subf below. 
+        two_to_one = regex.fullmatch(Modifiers([0]) + AB_wfs(form2, True), string)  ## ^^^^^
+        deep = regex.fullmatch(general, string)
+        left = []
+        for lstring in interchange (deep.group("wfs_1"), form1, form2):
+            left.extend(replace(deep, "{Modifiers_0}{lbra}" + lstring + "{opperator}{wfs_2}{rbra}"))
+        right = []
+        for rstring in interchange (deep.group("wfs_2"), form1, form2):
+            right.extend(replace(deep, "{Modifiers_0}{lbra}{wfs_1}{opperator}" + rstring + "{rbra}"))
+        return replace(one_to_two, "{Modifiers_0}" + AB_wfs(form2, False)) + replace(two_to_one, "{Modifiers_0}" + AB_wfs(form1, False)) + left + right
 
 def DeMorgan (string):
     return interchange(string, "<~A&~B>", "~<AVB>")
 
-def Contrapositive (string, reverse = False):
+def Contrapositive (string):
     return interchange(string, "<A-B>", "<~B-~A>")
 
-def Switcheroo (string, reverse = False):
+def Switcheroo (string):
     return interchange(string, "<AVB>", "<~A-B>")
 
 # -----------------
 # Tests
 # -----------------
+DeMorgan_Test_1 = "~<Ab:<~a=b&~~b=d>V<~~a=a'&~Sb=SSb>>"
+DeMorgan_Test_2 = "Ab:<~a=b&~c=d>"
+Contrapositive_Test_1 = "<~a=b-~c=d>"
+Switcheroo_Test_1 = "<a=b'Vc=SSSSSd''>"
+Contrapositive_Test_2 = "<~a=(S0.a''')-~c=d>"
+
+print(DeMorgan(DeMorgan_Test_1))
+print(DeMorgan(DeMorgan_Test_2))
+print(Contrapositive(Contrapositive_Test_1))
+print(Switcheroo(Switcheroo_Test_1))
+print(Contrapositive(Contrapositive_Test_2))
+print(Switcheroo(Contrapositive_Test_1))
+print(Switcheroo(DeMorgan_Test_1))
+
+
+# -----------------
+# Archived Tests
+# -----------------
+
 # print(AB_wfs("<~A&~B>", True))
 # print("\n")
-print(groups(regex.fullmatch(AB_wfs("A", True), "~a=b"))["wfs_1"])
+# print(groups(regex.fullmatch(AB_wfs("A", True), "~a=b"))["wfs_1"])
 # print("\n")
-print(DeMorgan("<<~a=b&~~b=d>V<~~a=a'&~Sb=SSb>>"))
-print(groups(regex.fullmatch(wfs(), "a=b")))
-print(groups(regex.fullmatch(wfs(), "<a=b-b=c>")))
-print(groups(regex.fullmatch(wfs(), "Ea''':<a=b-b=Sc'>")))
-print(groups(regex.fullmatch(wfs(), "~Aa:a=SSSS0'''''")))
-print(groups(regex.fullmatch(wfs(), "~Aa:<<a=a'-b=b'>&<c=c'Vd=d'>>")))
-print(groups(regex.fullmatch(Modifiers + AB_wfs("<A[&V-]B>", True), "~Aa:<<a=a'-b=b'>&~Aa:<c=c'Vd=d'>>")))
+#test = regex.fullmatch(general, "Ab:<~a=b&~~b=d>")
+#print(groups(test))
+#print(test.group("Modifiers_0"))
+#print(DeMorgan(test.group("wfs_1")))
+#print(DeMorgan("Ab:<~a=b&~~b=d>"))
+# print(groups(regex.fullmatch(wfs(), "a=b")))
+# print(groups(regex.fullmatch(wfs(), "<a=b-b=c>")))
+# print(groups(regex.fullmatch(wfs(), "Ea''':<a=b-b=Sc'>")))
+# print(groups(regex.fullmatch(wfs(), "~Aa:a=SSSS0'''''")))
+# print(groups(regex.fullmatch(wfs(), "~Aa:<<a=a'-b=b'>&<c=c'Vd=d'>>")))
+# print(groups(regex.fullmatch(Modifiers + AB_wfs("<A[&V-]B>", True), "~Aa:<<a=a'-b=b'>&~Aa:<c=c'Vd=d'>>")))
