@@ -5,7 +5,7 @@ import regex
 theorems = open("theorems.txt", "w+")
 
 # apply_rules takes in a list of the rules from TNT/Propositional Calc and applies them to a list of known theorems and puts them in the file of theorems.
-def apply_rules(rules, tfrsdfsdf):
+def apply_rules(rules, strings):
 	pass
 
 # takes in a regex match and returns a list of groups matched is there are any, and an empty list if no matches are made.
@@ -77,6 +77,9 @@ axioms = {
 4: [4, "axiom_4", "Aa:(a.0)=0"],
 5: [5, "axiom_5", "Aa:Ab:(a.Sb)=((a.b)+a)"]
 } 
+
+
+
 
 
 # -----------------
