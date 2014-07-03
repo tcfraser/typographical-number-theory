@@ -1,12 +1,12 @@
 from predicates import *
-import regex
+import regex 
 
-axiom_1 = "Aa:~Sa=0"    #[forall, var_a, colon, not_, succ, var_a, equal, zero]
-axiom_2 = "Aa:(a+0)=a"  #[forall, var_a, colon, l_para, var_a, add, zero, r_para, equal, var_a]
-axiom_3 = "Aa:Ab:(a+Sb)=S(a+b)"
-axiom_4 = "Aa:(a.0)=0"
-axiom_5 = "Aa:Ab:(a.Sb)=((a.b)+a)"
+# Temporary documentation for the list of theorems
+theorems = open("theorems.txt", "w+")
 
+# apply_rules takes in a list of the rules from TNT/Propositional Calc and applies them to a list of known theorems and puts them in the file of theorems.
+def apply_rules(rules, tfrsdfsdf):
+	pass
 
 # takes in a regex match and returns a list of groups matched is there are any, and an empty list if no matches are made.
 # regexmatch -> [matched groups]
@@ -59,22 +59,42 @@ def Contrapositive (string):
 def Switcheroo (string):
     return interchange(string, "<AVB>", "<~A-B>")
 
+
+
+
+# This is the list of all the applicable rules to well formed strings 
+rules = {
+DeMorgan.__name__: DeMorgan,
+Contrapositive.__name__: Contrapositive,
+Switcheroo.__name__: Switcheroo
+}
+
+# List of the common TNT axioms expressed in custom theorem notation
+axioms = {
+1: [1, "axiom_1", "Aa:~Sa=0"],
+2: [2, "axiom_2", "Aa:(a+0)=a"], 
+3: [3, "axiom_3", "Aa:Ab:(a+Sb)=S(a+b)"],
+4: [4, "axiom_4", "Aa:(a.0)=0"],
+5: [5, "axiom_5", "Aa:Ab:(a.Sb)=((a.b)+a)"]
+} 
+
+
 # -----------------
 # Tests
 # -----------------
-DeMorgan_Test_1 = "~<Ab:<~a=b&~~b=d>V<~~a=a'&~Sb=SSb>>"
-DeMorgan_Test_2 = "Ab:<~a=b&~c=d>"
-Contrapositive_Test_1 = "<~a=b-~c=d>"
-Switcheroo_Test_1 = "<a=b'Vc=SSSSSd''>"
-Contrapositive_Test_2 = "<~a=(S0.a''')-~c=d>"
+# DeMorgan_Test_1 = "~<Ab:<~a=b&~~b=d>V<~~a=a'&~Sb=SSb>>"
+# DeMorgan_Test_2 = "Ab:<~a=b&~c=d>"
+# Contrapositive_Test_1 = "<~a=b-~c=d>"
+# Switcheroo_Test_1 = "<a=b'Vc=SSSSSd''>"
+# Contrapositive_Test_2 = "<~a=(S0.a''')-~c=d>"
 
-print(DeMorgan(DeMorgan_Test_1))
-print(DeMorgan(DeMorgan_Test_2))
-print(Contrapositive(Contrapositive_Test_1))
-print(Switcheroo(Switcheroo_Test_1))
-print(Contrapositive(Contrapositive_Test_2))
-print(Switcheroo(Contrapositive_Test_1))
-print(Switcheroo(DeMorgan_Test_1))
+# print(DeMorgan(DeMorgan_Test_1))
+# print(DeMorgan(DeMorgan_Test_2))
+# print(Contrapositive(Contrapositive_Test_1))
+# print(Switcheroo(Switcheroo_Test_1))
+# print(Contrapositive(Contrapositive_Test_2))
+# print(Switcheroo(Contrapositive_Test_1))
+# print(Switcheroo(DeMorgan_Test_1))
 
 
 # -----------------
