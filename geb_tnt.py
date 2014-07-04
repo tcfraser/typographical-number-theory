@@ -15,7 +15,7 @@ def apply_rules(strings):
 # regexmatch -> [matched groups]
 def groups (match):
     if match == None:
-        return []
+        return "Nothing"
     else:
         return match.capturesdict()
 
@@ -70,28 +70,45 @@ def Seperation (string):
 	match = regex.fullmatch(match_regex, string)
 	return replace(match, newform1) + replace(match, newform2)
 
+# if A and B are theorems then <A&B> are theorems
+def Joining (string):
+	result = []
+	for theorem in theorems:
+		newtheorem = "<" + string + "&" + theorem[2] + ">"
+		result.append(newtheorem)
+	return result
 
+def Detachment (string):
+	result = []
+	match_regex = "(?P<lbra><)" + wfs([1]) + "(?P<opperator>-)" + wfs([2]) +  "(?P<rbra>>)"
+	match = regex.fullmatch(match_regex, string)
+	if match:
+		for theorem in theorems:
+			if match.group("wfs_1") == theorem[2]:
+				result.append(match.group("wfs_2"))
+	return result
 
 # This is the list of all the applicable rules to well formed strings 
 rules = {
 DeMorgan.__name__: DeMorgan,
 Contrapositive.__name__: Contrapositive,
 Switcheroo.__name__: Switcheroo,
-Seperation.__name__: Seperation
+Seperation.__name__: Seperation,
+Joining.__name__: Joining,
+Detachment.__name__: Detachment	
 }
 
 # List of the common TNT axioms expressed in custom theorem notation
-axioms = {
-1: [1, "axiom_1", "Aa:~Sa=0"],
-2: [2, "axiom_2", "Aa:(a+0)=a"], 
-3: [3, "axiom_3", "Aa:Ab:(a+Sb)=S(a+b)"],
-4: [4, "axiom_4", "Aa:(a.0)=0"],
-5: [5, "axiom_5", "Aa:Ab:(a.Sb)=((a.b)+a)"]
-}
+axioms = [
+[1, "axiom_1", "Aa:~Sa=0"],
+[2, "axiom_2", "Aa:(a+0)=a"], 
+[3, "axiom_3", "Aa:Ab:(a+Sb)=S(a+b)"],
+[4, "axiom_4", "Aa:(a.0)=0"],
+[5, "axiom_5", "Aa:Ab:(a.Sb)=((a.b)+a)"]
+]
 
 # List of the theorems generated 
 theorems =  axioms
-
 
 # -----------------
 # Tests
@@ -111,7 +128,10 @@ Contrapositive_Test_2,
 Switcheroo_Test_1
 ]
 
-apply_rules(test_strings)
+# apply_rules(test_strings)
+temp_axioms = [theorem[2] for theorem in axioms]
+
+apply_rules(temp_axioms)
 
 # print(DeMorgan(DeMorgan_Test_1))
 # print(DeMorgan(DeMorgan_Test_2))

@@ -20,7 +20,7 @@ def Term(i = [0]):
 def wfs(i = [0]):
     return regex.subf(r"wfs", "wfs" + indices(i), "(?P<wfs>" +  Quantifiers([i[0],1]) + "(?:<((?&wfs))[&V-]((?&wfs))>" + "|" + Term([i[0],1]) + "=" + Term([i[0],2]) + "))")
 
-# the general wfs composed of two wfs
+# the general wfs composed of two isWFS
 general =  Quantifiers([0]) + "(?P<lbra><)" + wfs([1]) + "(?P<opperator>[&V-])" + wfs([2]) +  "(?P<rbra>>)"
 
 # Predicate to determine if string matches desired regular expression
